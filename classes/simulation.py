@@ -1,10 +1,12 @@
 import pygame
 import time
-from Pendulum_Simulation.classes.physics_engine import Physics_engine
+from classes.physics_engine import Physics_engine
+from debug import Debugger
 
 
 class Simulation:
     physics_engine = Physics_engine()
+    debug = Debugger()
 
     def __init__(self):
         self.run = None
@@ -20,6 +22,7 @@ class Simulation:
 
         #starts pygame
         pygame.init()
+        self.clock = pygame.time.Clock()
         self.font = pygame.font.Font(None, 30)
 
         #display window
@@ -34,6 +37,7 @@ class Simulation:
 
     def show_environment(self):
         while self.run:
+            dt = self.clock.tick(60) / 1000
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.run = False
@@ -42,30 +46,28 @@ class Simulation:
 
             net_force = self.physics_engine.compute_force_vectors()
 
-            pygame.draw.circle(self.screen, "blue", (500, 200), 5)
+            
             pygame.draw.rect(self.screen, "black", (0, 0, 1000, 200), )
             self.write("Blue = velocity", (400, 100), (255, 255, 255))
-            self.write("Red = distance from equilibrium", (400, 125), (255, 255, 255))
-            self.write("Green = Net force", (400, 150), (255, 255, 255))
+            self.write("Green = Net force", (400, 125), (255, 255, 255))
 
             for i, body in enumerate(self.bodies):
                 body.force = net_force[i]
 
             for body in self.bodies:
                 body.draw(self.screen)
-                text = str.format('{0:.3f}', body.velocity[0])
+                # velocity
+                text = str.format('{0:.3f}', body.velocity)
                 location = (body.position[0] + 20, body.position[1] + 20)
                 self.write(text, location)
-                text1 = str.format('{0:.3f}', body.arc_displacement[0])
-                location1 = (body.position[0] + 20, body.position[1] + 40)
-                self.write(text1, location1, (255, 0, 0))
-                text2 = str.format('{0:.3f}', body.force[0])
+                # force
+                text2 = str.format('{0:.3f}', body.force)
                 location2 = (body.position[0] + 20, body.position[1] + 60)
                 self.write(text2, location2, (0, 255, 0))
 
             for body in self.bodies:
-                body.move()
+                body.move(dt)
 
-            #time.sleep(0.0005)
+            self.debug.debugger(dt)
             pygame.display.update()
-            #self.clock.tick(60)
+            
