@@ -7,7 +7,7 @@ The current physics engine assumes the small angle approximation for the pendulu
 ## Energy Plot
 A graph to showcase the difference between the RK4 and Euler methods. The Euler method is largely unstable and allows the energy to vary due to confounding rounding errors. The RK4 method minimizes this error. 
 
-![energy plot](Pendulum_Simulation/energy_vs_time.png)
+![energy plot](./energy_vs_time.png)
 
 
 # Planned changes
